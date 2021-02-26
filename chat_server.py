@@ -84,7 +84,7 @@ from the list that was created at the beginning of
 the program"""
 def remove(connection):  
     if connection in list_of_clients:  
-        list_of_clients.remove(connection)  
+        list_of_clients.pop(connection)  
   
 while True:  
   
