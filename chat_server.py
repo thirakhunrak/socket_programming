@@ -1,9 +1,9 @@
 # Python program to implement server side of chat room.  
-import socket
-import select
-import sys
+import socket  
+import select  
+import sys  
 from thread import *
-
+  
 """The first argument AF_INET is the address domain of the  
 socket. This is used when we have an Internet Domain with  
 any two hosts The second argument is the type of socket.  
@@ -11,38 +11,37 @@ SOCK_STREAM means that data or characters are read in
 a continuous flow."""
 server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)  
 server.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)  
-  
+name = ''
 # checks whether sufficient arguments have been provided  
 # if len(sys.argv) != 3:  
 #     print ("Correct usage: script, IP address, port number") 
 #     exit()  
   
 # takes the first argument from command prompt as IP address  
-IP_address = '127.0.0.1'  
+IP_address = '127.0.0.1'
   
 # takes second argument from command prompt as port number  
-Port = 30176
+Port = 30176 
   
 """  
 binds the server to an entered IP address and at the  
 specified port number.  
 The client must be aware of these parameters  
 """
-name = ''
 server.bind((IP_address, Port))  
   
 """  
 listens for 100 active connections. This number can be  
 increased as per convenience.  
 """
-server.listen(100)  
+server.listen(2)  
   
-list_of_clients = []  
+list_of_clients = dict()  
   
 def clientthread(conn, addr):  
-  
+    client_name = list_of_clients.get(conn)
     # sends a message to the client whose user object is conn  
-    conn.send("Welcome to this chatroom!")  
+    conn.send("Welcome '"+ client_name + "' to this chatroom!")  
   
     while True:  
             try:  
@@ -52,10 +51,10 @@ def clientthread(conn, addr):
                     """prints the message and address of the  
                     user who just sent the message on the server  
                     terminal"""
-                    print ("<" + addr + "> " + message)  
+                    print ("<" + client_name + "> " + message)  
   
                     # Calls broadcast function to send message to all  
-                    message_to_send = "<" + addr + "> " + message  
+                    message_to_send = "<" + client_name + "> " + message  
                     broadcast(message_to_send, conn)  
   
                 else:  
@@ -94,14 +93,14 @@ while True:
     which contains the IP address of the client that just  
     connected"""
     conn, addr = server.accept()  
-
+  
     """Maintains a list of clients for ease of broadcasting  
-    a message to all available people in the chatroom"""
-    list_of_clients.append(conn)  
-    
-    print(addr)
+    a message to all available people in the chatroom"""  
+    temp = conn.recv(2048)
+    name = str(temp)
+    list_of_clients[conn] = name
     # prints the address of the user that just connected  
-    print (" connected") 
+    print (name + " connected") 
   
     # creates and individual thread for every user  
     # that connects  

@@ -5,12 +5,12 @@ import sys
   
 server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)  
 if len(sys.argv) != 2:  
-    print ("Correct usage: script, Client name") 
+    print ("Correct usage: script, IP address, port number") 
     exit()  
-IP_address = '' 
+IP_address = '127.0.0.1'
 Port = 30176 
-server.connect((IP_address, Port))  
-  
+server.connect((IP_address, Port))
+server.send(str(sys.argv[1])) 
 while True:  
   
     # maintains a list of possible input streams  
@@ -28,12 +28,12 @@ while True:
   
     for socks in read_sockets:  
         if socks == server:  
-            message = socks.recv(2048)  
+            message = socks.recv(2048) 
             print (message)  
         else:  
-            message = sys.stdin.readline()  
-            server.send((message,str(sys.argv[1])))  
-            sys.stdout.write("<"+str(sys.argv[1])+">")  
+            message = sys.stdin.readline()
+            server.send(message)  
+            sys.stdout.write("<You> ")  
             sys.stdout.write(message)  
             sys.stdout.flush()  
 server.close()  
